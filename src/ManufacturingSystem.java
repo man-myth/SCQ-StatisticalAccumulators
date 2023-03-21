@@ -16,5 +16,5 @@ public class ManufacturingSystem {
         machineParts.put(11, new Double[]{40.82, null, null});
     }
 
-    
+
 }
