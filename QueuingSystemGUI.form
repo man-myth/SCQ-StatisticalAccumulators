@@ -79,7 +79,7 @@
                 </constraints>
                 <properties>
                   <font style="1"/>
-                  <text value="Probability of waiting"/>
+                  <text value="Probability of waiting:"/>
                 </properties>
               </component>
               <component id="3c8a3" class="javax.swing.JLabel" binding="ptsLabel">
@@ -88,7 +88,7 @@
                 </constraints>
                 <properties>
                   <font style="1"/>
-                  <text value="Proportion of time server is idle"/>
+                  <text value="Proportion of time server is idle:"/>
                 </properties>
               </component>
               <component id="96909" class="javax.swing.JLabel" binding="asrLabel">
@@ -97,7 +97,7 @@
                 </constraints>
                 <properties>
                   <font style="1"/>
-                  <text value="Average service time"/>
+                  <text value="Average service time:"/>
                 </properties>
               </component>
               <component id="b2243" class="javax.swing.JLabel" binding="atbaLabel">
@@ -106,7 +106,7 @@
                 </constraints>
                 <properties>
                   <font style="1"/>
-                  <text value="Average time between arrivals"/>
+                  <text value="Average time between arrivals:"/>
                 </properties>
               </component>
               <component id="68b21" class="javax.swing.JLabel" binding="awtqLabel">
@@ -115,7 +115,7 @@
                 </constraints>
                 <properties>
                   <font style="1"/>
-                  <text value="Average waiting time in queue"/>
+                  <text value="Average waiting time in queue:"/>
                 </properties>
               </component>
               <component id="d930" class="javax.swing.JLabel" binding="atsLabel">
@@ -124,7 +124,7 @@
                 </constraints>
                 <properties>
                   <font style="1"/>
-                  <text value="Average time in system"/>
+                  <text value="Average time in system:"/>
                 </properties>
               </component>
               <component id="35a8c" class="javax.swing.JLabel" binding="wtValue">
