@@ -1,6 +1,9 @@
+package src;
+
 import com.sun.tools.javac.util.List;
 
 import java.util.ArrayList;
+import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.Stack;
 
@@ -13,7 +16,8 @@ public class ManufacturingSystem {
     int qt = 0;
     boolean bt = false;
     Stack<Double> queue = new Stack<>();
-    double inService  = 0;
+//    double inService  = 0.00;
+    Stack<Double> inService = new Stack<>(); // to allow empty values
     int p = 0;
     int n = 0;
     double wqsum = 0;
@@ -36,15 +40,45 @@ public class ManufacturingSystem {
         simulation.add(List.of(entityno,time,eventType,qt,bt,queue,inService,p,n,wqsum,wqmax,tssum,tsmax));
     }
 
-    public void doNextEvent(){
+//    public void doNextEvent(){
+//        entityno ++; // consider arrival and departure
+//        Double[] attributes = machineParts.get(entityno);
+//        time = attributes[0];
+//        queue.add(time);
+//
+//    }
+
+    public void arrival(){
         entityno ++;
         Double[] attributes = machineParts.get(entityno);
         time = attributes[0];
-        queue.add(time);
+        eventType = "Arr";
+        queue.push(time); // remember to leave blank for entity 1
+        bt = !inService.isEmpty();
+        qt = queue.size();
 
+    }
 
-
-
+    // Most changes occur at departure event
+    public void departure(){
+        entityno ++;
+        Double[] attributes = machineParts.get(entityno);
+        time = attributes[2]; // should be (service + time in queue)
+        eventType = "Dep";
+        if (queue.isEmpty()) {
+            try {
+                inService.pop();
+                inService.push(time);
+            } catch(EmptyStackException exc){
+                inService.push(time);
+            }
+        } else {
+            inService.pop();
+            inService.push(queue.pop());
+        }
+        p++;
+        n++;
+        // wqsum, wqmax, tssum, tmax to be implemented in departure
     }
 
     public static void main(String[] arg){
