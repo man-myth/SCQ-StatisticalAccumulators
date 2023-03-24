@@ -1,11 +1,4 @@
-package src;
-
-import com.sun.tools.javac.util.List;
-
-import java.util.ArrayList;
-import java.util.EmptyStackException;
-import java.util.HashMap;
-import java.util.Stack;
+import java.util.*;
 
 public class ManufacturingSystem {
     HashMap<Integer, Double[]> machineParts = new HashMap<>();
@@ -25,6 +18,7 @@ public class ManufacturingSystem {
     double tssum = 0;
     double tsmax = 0;
 
+    //instantiator
     public ManufacturingSystem(){
         machineParts.put(1, new Double[]{0.0, 1.73, 2.90}); // cust no., arrival time, interarrival time, service time
         machineParts.put(2, new Double[]{1.73, 1.35, 1.76});
@@ -40,13 +34,13 @@ public class ManufacturingSystem {
         simulation.add(List.of(entityno,time,eventType,qt,bt,queue,inService,p,n,wqsum,wqmax,tssum,tsmax));
     }
 
-//    public void doNextEvent(){
-//        entityno ++; // consider arrival and departure
-//        Double[] attributes = machineParts.get(entityno);
-//        time = attributes[0];
-//        queue.add(time);
-//
-//    }
+    public void doNextEvent(){
+        entityno ++; // consider arrival and departure
+        Double[] attributes = machineParts.get(entityno);
+        time = attributes[0];
+        queue.add(time);
+
+    }
 
     public void arrival(){
         entityno ++;
