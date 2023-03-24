@@ -1,22 +1,24 @@
+import org.w3c.dom.events.Event;
+
 import java.util.*;
 
 public class ManufacturingSystem {
-    HashMap<Integer, Double[]> machineParts = new HashMap<>();
-    ArrayList<Object> simulation = new ArrayList<>();
-    int entityno = 0;
-    double time  = 0;
-    String eventType = "Init";
-    int qt = 0;
-    boolean bt = false;
-    Stack<Double> queue = new Stack<>();
-//    double inService  = 0.00;
-    Stack<Double> inService = new Stack<>(); // to allow empty values
-    int p = 0;
-    int n = 0;
-    double wqsum = 0;
-    double wqmax = 0;
-    double tssum = 0;
-    double tsmax = 0;
+    static HashMap<Integer, Double[]> machineParts = new HashMap<>();
+    static ArrayList<Object> simulation = new ArrayList<>();
+    static int entityno = 0;
+    static double time  = 0;
+    static String eventType = "Init";
+    static int qt = 0;
+    static boolean bt = false;
+    static Stack<Integer> queue = new Stack<>();
+    static int inService  = 0;
+//    Stack<Double> inService = new Stack<>(); // to allow empty values
+    static int p = 0;
+    static int n = 0;
+    static double wqsum = 0;
+    static double wqmax = 0;
+    static double tssum = 0;
+    static double tsmax = 0;
 
     //instantiator
     public ManufacturingSystem(){
@@ -31,6 +33,25 @@ public class ManufacturingSystem {
         machineParts.put(9, new Double[]{38.06, 1.76, 2.37});
         machineParts.put(10, new Double[]{39.82, 1.00, 5.38});
         machineParts.put(11, new Double[]{40.82, null, null});
+        updateSimulationrow();
+    }
+
+    public void goToNextEvent(){
+        if(eventType.equalsIgnoreCase("Init")){
+            System.out.println("inside");
+            entityno ++;
+            eventType = "Arr";
+            queue.push(entityno);
+            if(inService == 0){
+                inService = queue.pop();
+                n++;
+            }
+            Double[] attributes = machineParts.get(entityno);
+            time = attributes[0];
+        }
+        updateSimulationrow();
+    }
+    public void updateSimulationrow(){
         simulation.add(entityno);
         simulation.add(time);
         simulation.add(eventType);
@@ -46,46 +67,38 @@ public class ManufacturingSystem {
         simulation.add(tsmax);
     }
 
-    public void goToNextEvent(){
-        entityno ++; // consider arrival and departure
-        Double[] attributes = machineParts.get(entityno);
-        time = attributes[0];
-        queue.add(time);
-
-    }
-
-    public void arrival(){
-        entityno ++;
-        Double[] attributes = machineParts.get(entityno);
-        time = attributes[0];
-        eventType = "Arr";
-        queue.push(time); // remember to leave blank for entity 1
-        bt = !inService.isEmpty();
-        qt = queue.size();
-
-    }
+//    public void arrival(){
+//        entityno ++;
+//        Double[] attributes = machineParts.get(entityno);
+//        time = attributes[0];
+//        eventType = "Arr";
+//        queue.push(time); // remember to leave blank for entity 1
+//        bt = !inService.isEmpty();
+//        qt = queue.size();
+//
+//    }
 
     // Most changes occur at departure event
-    public void departure(){
-        entityno ++;
-        Double[] attributes = machineParts.get(entityno);
-        time = attributes[2]; // should be (service + time in queue)
-        eventType = "Dep";
-        if (queue.isEmpty()) {
-            try {
-                inService.pop();
-                inService.push(time);
-            } catch(EmptyStackException exc){
-                inService.push(time);
-            }
-        } else {
-            inService.pop();
-            inService.push(queue.pop());
-        }
-        p++;
-        n++;
-        // wqsum, wqmax, tssum, tmax to be implemented in departure
-    }
+//    public void departure(){
+//        entityno ++;
+//        Double[] attributes = machineParts.get(entityno);
+//        time = attributes[2]; // should be (service + time in queue)
+//        eventType = "Dep";
+//        if (queue.isEmpty()) {
+//            try {
+//                inService.pop();
+//                inService.push(time);
+//            } catch(EmptyStackException exc){
+//                inService.push(time);
+//            }
+//        } else {
+//            inService.pop();
+//            inService.push(queue.pop());
+//        }
+//        p++;
+//        n++;
+//        // wqsum, wqmax, tssum, tmax to be implemented in departure
+//    }
 
 
 }

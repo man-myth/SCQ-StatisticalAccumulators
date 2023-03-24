@@ -78,11 +78,13 @@ public class ManufacturingSystemGUI extends JFrame {
                 ArrayList<ArrayList<Object>> rows = new ArrayList<>();
                 int i = 0;
                 for(double time = ms.time; time < maxTime;){
-                    ms.goToNextEvent();
-                    System.out.println(ms.simulation.toString());
                     rows.add(ms.simulation);
+                    ms.goToNextEvent();
                     time = ms.time;
                     i++;
+                    if(i == 5){
+                        break;
+                    }
                 }
 
                 results = rows.stream().map(u -> u.toArray(new Object[0])).toArray(Object[][]::new);
