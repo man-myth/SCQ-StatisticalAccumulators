@@ -33,11 +33,10 @@ public class ManufacturingSystem {
         machineParts.put(9, new Double[]{38.06, 1.76, 2.37});
         machineParts.put(10, new Double[]{39.82, 1.00, 5.38});
         machineParts.put(11, new Double[]{40.82, null, null});
-
+        updateSimulationrow();
     }
 
-    public void goToNextEvent(){
-
+    public static void goToNextEvent(){
         int current = entityno;
         int next  = entityno + 1;
         if(eventType == "Init"){
@@ -70,7 +69,7 @@ public class ManufacturingSystem {
         System.out.println(queue);
         updateSimulationrow();
     }
-    public void updateSimulationrow(){
+    public static void updateSimulationrow(){
         simulation.clear();
         simulation.add(entityno);
         simulation.add(time);
@@ -123,8 +122,8 @@ public class ManufacturingSystem {
         public static void main(String[] args){
             ManufacturingSystem ms = new ManufacturingSystem();
             System.out.println(ms.simulation);
-            for (int i = 10; i < 10; i++) {
-                ms.goToNextEvent();
+            for (int i = 0; i < 10; i++) {
+               ms.goToNextEvent();
             }
         }
 }
