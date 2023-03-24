@@ -9,7 +9,7 @@ public class ManufacturingSystem {
     static double time  = 0;
     static String eventType = "Init";
     static int qt = 0;
-    static boolean bt = false;
+    static int bt = 0;
     static Stack<Integer> queue = new Stack<>();
     static int inService  = 0;
 //    Stack<Double> inService = new Stack<>(); // to allow empty values
@@ -33,25 +33,45 @@ public class ManufacturingSystem {
         machineParts.put(9, new Double[]{38.06, 1.76, 2.37});
         machineParts.put(10, new Double[]{39.82, 1.00, 5.38});
         machineParts.put(11, new Double[]{40.82, null, null});
-        updateSimulationrow();
+
     }
 
     public void goToNextEvent(){
-        if(eventType.equalsIgnoreCase("Init")){
-            System.out.println("inside");
-            entityno ++;
+
+        int current = entityno;
+        int next  = entityno + 1;
+        if(eventType == "Init"){
+
+        }
+        try{
+            if(machineParts.get(entityno)[1] < machineParts.get(entityno+1)[0]){
+
+            }
+        } catch (Exception ex){
+
+        }
+
+        if(time <= machineParts.get(entityno+1)[0]){
+            entityno += 1;
             eventType = "Arr";
             queue.push(entityno);
             if(inService == 0){
                 inService = queue.pop();
+                bt = 1;
                 n++;
             }
+            qt = queue.size();
             Double[] attributes = machineParts.get(entityno);
             time = attributes[0];
         }
+
+        System.out.println(entityno);
+        System.out.println(eventType);
+        System.out.println(queue);
         updateSimulationrow();
     }
     public void updateSimulationrow(){
+        simulation.clear();
         simulation.add(entityno);
         simulation.add(time);
         simulation.add(eventType);
@@ -100,5 +120,11 @@ public class ManufacturingSystem {
 //        // wqsum, wqmax, tssum, tmax to be implemented in departure
 //    }
 
-
+        public static void main(String[] args){
+            ManufacturingSystem ms = new ManufacturingSystem();
+            System.out.println(ms.simulation);
+            for (int i = 10; i < 10; i++) {
+                ms.goToNextEvent();
+            }
+        }
 }

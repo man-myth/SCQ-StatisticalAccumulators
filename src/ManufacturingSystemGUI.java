@@ -75,9 +75,13 @@ public class ManufacturingSystemGUI extends JFrame {
 
                 // Creating a new ManufacturingSystem object
                 ManufacturingSystem ms = new ManufacturingSystem();
+
                 ArrayList<ArrayList<Object>> rows = new ArrayList<>();
+                rows.add(ms.simulation);
+
                 int i = 0;
                 for(double time = ms.time; time < maxTime;){
+                    System.out.println(rows);
                     rows.add(ms.simulation);
                     ms.goToNextEvent();
                     time = ms.time;
@@ -87,7 +91,7 @@ public class ManufacturingSystemGUI extends JFrame {
                     }
                 }
 
-                results = rows.stream().map(u -> u.toArray(new Object[0])).toArray(Object[][]::new);
+                results = rows.stream().map(u -> u.toArray(new Object[0])).toArray(Object[][]::new); //fix this
 
                 // Updating the table with the new results
                 table.setModel(new DefaultTableModel(
