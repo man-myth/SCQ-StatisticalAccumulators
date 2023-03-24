@@ -31,10 +31,22 @@ public class ManufacturingSystem {
         machineParts.put(9, new Double[]{38.06, 1.76, 2.37});
         machineParts.put(10, new Double[]{39.82, 1.00, 5.38});
         machineParts.put(11, new Double[]{40.82, null, null});
-        simulation.add(List.of(entityno,time,eventType,qt,bt,queue,inService,p,n,wqsum,wqmax,tssum,tsmax));
+        simulation.add(entityno);
+        simulation.add(time);
+        simulation.add(eventType);
+        simulation.add(qt);
+        simulation.add(bt);
+        simulation.add(queue);
+        simulation.add(inService);
+        simulation.add(p);
+        simulation.add(n);
+        simulation.add(wqsum);
+        simulation.add(wqmax);
+        simulation.add(tssum);
+        simulation.add(tsmax);
     }
 
-    public void doNextEvent(){
+    public void goToNextEvent(){
         entityno ++; // consider arrival and departure
         Double[] attributes = machineParts.get(entityno);
         time = attributes[0];
@@ -75,9 +87,5 @@ public class ManufacturingSystem {
         // wqsum, wqmax, tssum, tmax to be implemented in departure
     }
 
-    public static void main(String[] arg){
-        ManufacturingSystem mn = new ManufacturingSystem();
-
-    }
 
 }

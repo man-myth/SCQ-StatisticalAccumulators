@@ -40,7 +40,7 @@ public class ManufacturingSystemGUI extends JFrame {
             "B(t)", "In Queue", "In service", "P", "N", "ΣWQ", "WQ*", "ΣTQ", "TS*"};
 
     // Initializing the results array
-    Integer[][] results = new Integer[1][1];
+    Object[][] results = new Object[1][1];
 
     // Initializing variables to keep track of the maximum time and customer values
     int maxTime = 0;
@@ -74,24 +74,32 @@ public class ManufacturingSystemGUI extends JFrame {
                 maxTime = Integer.parseInt(input.getText());
 
                 // Creating a new ManufacturingSystem object
-                ManufacturingSystem simulation = new ManufacturingSystem();
-                ArrayList<> result= new ArrayList<>();
-                for(double time = simulation.time; time < maxTime; time = simulation.time){
-
+                ManufacturingSystem ms = new ManufacturingSystem();
+                ArrayList<ArrayList<Object>> rows = new ArrayList<>();
+                int i = 0;
+                for(double time = ms.time; time < maxTime;){
+                    ms.goToNextEvent();
+                    System.out.println(ms.simulation.toString());
+                    rows.add(ms.simulation);
+                    time = ms.time;
+                    i++;
                 }
+
+                results = rows.stream().map(u -> u.toArray(new Object[0])).toArray(Object[][]::new);
+
                 // Updating the table with the new results
                 table.setModel(new DefaultTableModel(
                         results,
                         headers
                 ));
                 // Updating the analytics panel with the new values
-                nppValue.setText(String.valueOf(Math.round(qss.averageWaitingTime*1000.0)/1000.0) + " minutes");
-                twtValue.setText();
-                nptValue.setText(String.valueOf(Math.round(qss.proportionOfIdleTime*1000.0)/1000.0) + "%");
-                ltsValue.setText(String.valueOf(Math.round(qss.averageServiceTime*1000.0)/1000.0)+ " minutes");
-                ltValue.setText(String.valueOf(Math.round(qss.averageTimeBetweenArrivals*1000.0)/1000.0)+ " minutes");
-                auqvalue.setText(String.valueOf(Math.round(qss.averageWaitingTimeInQueue*1000.0)/1000.0)+ " minutes");
-                htqValue.setText(String.valueOf(Math.round(qss.averageTimeInSystem*1000.0)/1000.0)+ " minutes");
+//                nppValue.setText(String.valueOf(Math.round(qss.averageWaitingTime*1000.0)/1000.0) + " minutes");
+//                twtValue.setText();
+//                nptValue.setText();
+//                ltsValue.setText();
+//                ltValue.setText();
+//                auqvalue.setText();
+//                htqValue.setText();
             }
 
 
