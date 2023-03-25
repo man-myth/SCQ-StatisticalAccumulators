@@ -1,4 +1,3 @@
-import org.w3c.dom.events.Event;
 
 import java.util.*;
 
@@ -10,8 +9,8 @@ public class ManufacturingSystem {
     static String eventType = "Init";
     static int qt = 0;
     static int bt = 0;
-    static Stack<Integer> queue = new Stack<>();
-    static int inService  = 0;
+    static Queue<Double> queue = new LinkedList<>();
+    static double inService  = 0;
 //    Stack<Double> inService = new Stack<>(); // to allow empty values
     static int p = 0;
     static int n = 0;
@@ -22,51 +21,93 @@ public class ManufacturingSystem {
 
     //instantiator
     public ManufacturingSystem(){
-        machineParts.put(1, new Double[]{0.0, 1.73, 2.90}); // cust no., arrival time, interarrival time, service time
-        machineParts.put(2, new Double[]{1.73, 1.35, 1.76});
-        machineParts.put(3, new Double[]{3.08, 0.71, 3.39});
-        machineParts.put(4, new Double[]{3.79, 0.62, 4.52});
-        machineParts.put(5, new Double[]{4.41, 14.28, 4.46});
-        machineParts.put(6, new Double[]{18.69, 0.70, 4.36});
-        machineParts.put(7, new Double[]{19.39, 15.52, 2.07});
-        machineParts.put(8, new Double[]{34.91, 3.15, 3.36});
-        machineParts.put(9, new Double[]{38.06, 1.76, 2.37});
-        machineParts.put(10, new Double[]{39.82, 1.00, 5.38});
+        machineParts.put(1, new Double[]{0.0, 2.90, 0.0}); // Key: custno, Value: [arrival time, service time, start of service]
+        machineParts.put(2, new Double[]{1.73, 1.76, 0.0});
+        machineParts.put(3, new Double[]{3.08, 3.39, 0.0});
+        machineParts.put(4, new Double[]{3.79, 4.52, 0.0});
+        machineParts.put(5, new Double[]{4.41, 4.46, 0.0});
+        machineParts.put(6, new Double[]{18.69, 4.36, 0.0});
+        machineParts.put(7, new Double[]{19.39, 2.07, 0.0});
+        machineParts.put(8, new Double[]{34.91, 3.36, 0.0});
+        machineParts.put(9, new Double[]{38.06, 2.37, 0.0});
+        machineParts.put(10, new Double[]{39.82, 5.38, 0.0});
         machineParts.put(11, new Double[]{40.82, null, null});
         updateSimulationrow();
     }
 
     public static void goToNextEvent(){
-        int current = entityno;
-        int next  = entityno + 1;
-        if(eventType == "Init"){
-
+        // check if the next entity in the list is in the queue
+        if(queue.contains(machineParts.get(entityno+1)[0]) & eventType == "Dep") {
+            ++entityno;
+            entityno = getKey(inService);
+            eventType = "Dep";
+            time = machineParts.get(getKey(inService))[2] + machineParts.get(getKey(inService))[1];
+            inService = queue.remove();
+            double arr = machineParts.get(getKey(inService))[0];
+            double ser = machineParts.get(getKey(inService))[1];
+            machineParts.put(getKey(inService),new Double[]{arr,ser,time});
+            bt = 1;
+            n++;
+            p++;
+            qt = queue.size();
+            updateSimulationrow();
+            entityno = getKey(inService);
+            return;
         }
         try{
-            if(machineParts.get(entityno)[1] < machineParts.get(entityno+1)[0]){
+            //Check if the person in queue is done
+//            System.out.println(machineParts.get(getKey(inService))[2] + machineParts.get(getKey(inService))[1]);
+//            System.out.println( machineParts.get(entityno+1)[0]);
 
+            if(machineParts.get(getKey(inService))[2] + machineParts.get(getKey(inService))[1] <= machineParts.get(entityno+1)[0]){
+                entityno = getKey(inService);
+                eventType = "Dep";
+                time = machineParts.get(getKey(inService))[2] + machineParts.get(getKey(inService))[1];
+                if(!queue.isEmpty()){
+                    inService = queue.remove();
+                    double arr = machineParts.get(getKey(inService))[0];
+                    double ser = machineParts.get(getKey(inService))[1];
+                    machineParts.put(getKey(inService),new Double[]{arr,ser,time});
+                    bt = 1;
+                    n++;
+                    p++;
+                    qt = queue.size();
+                    updateSimulationrow();
+                    entityno = getKey(inService);
+                } else {
+                    inService = -1;
+                    p++;
+                    bt = 0;
+                    qt = queue.size();
+                    updateSimulationrow();
+
+                }
+                return;
             }
         } catch (Exception ex){
-
+            System.out.println(ex.toString());
         }
 
+        // Check for arrivals
         if(time <= machineParts.get(entityno+1)[0]){
+
             entityno += 1;
-            eventType = "Arr";
-            queue.push(entityno);
-            if(inService == 0){
-                inService = queue.pop();
+
+            if(bt == 0){
+                inService = machineParts.get(entityno)[0];
                 bt = 1;
                 n++;
+                double arr = machineParts.get(getKey(inService))[0];
+                double ser = machineParts.get(getKey(inService))[1];
+                machineParts.put(getKey(inService),new Double[]{arr,ser,time});
+            } else {
+                queue.add(machineParts.get(entityno)[0]);
             }
+            eventType = "Arr";
             qt = queue.size();
             Double[] attributes = machineParts.get(entityno);
             time = attributes[0];
         }
-
-        System.out.println(entityno);
-        System.out.println(eventType);
-        System.out.println(queue);
         updateSimulationrow();
     }
     public static void updateSimulationrow(){
@@ -86,44 +127,25 @@ public class ManufacturingSystem {
         simulation.add(tsmax);
     }
 
-//    public void arrival(){
-//        entityno ++;
-//        Double[] attributes = machineParts.get(entityno);
-//        time = attributes[0];
-//        eventType = "Arr";
-//        queue.push(time); // remember to leave blank for entity 1
-//        bt = !inService.isEmpty();
-//        qt = queue.size();
-//
-//    }
 
-    // Most changes occur at departure event
-//    public void departure(){
-//        entityno ++;
-//        Double[] attributes = machineParts.get(entityno);
-//        time = attributes[2]; // should be (service + time in queue)
-//        eventType = "Dep";
-//        if (queue.isEmpty()) {
-//            try {
-//                inService.pop();
-//                inService.push(time);
-//            } catch(EmptyStackException exc){
-//                inService.push(time);
-//            }
-//        } else {
-//            inService.pop();
-//            inService.push(queue.pop());
-//        }
-//        p++;
-//        n++;
-//        // wqsum, wqmax, tssum, tmax to be implemented in departure
-//    }
+    public static int getKey(double value){
+        for (Map.Entry<Integer, Double[]> set :machineParts.entrySet()) {
+            if(set.getValue()[0] == value){
+                return set.getKey();
+            }
+        }
+        return 0;
+    }
 
         public static void main(String[] args){
             ManufacturingSystem ms = new ManufacturingSystem();
-            System.out.println(ms.simulation);
-            for (int i = 0; i < 10; i++) {
-               ms.goToNextEvent();
+            for (int i = 0; i < 15; i++) {
+//                if(i >9){
+//                    System.out.println(Arrays.toString(ms.machineParts.get(5)));
+//                }
+                System.out.println(ms.simulation);
+                ms.goToNextEvent();
+
             }
         }
 }
