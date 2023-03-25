@@ -3,6 +3,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ManufacturingSystemGUI extends JFrame {
     // Declaring components of the GUI
@@ -75,23 +76,23 @@ public class ManufacturingSystemGUI extends JFrame {
 
                 // Creating a new ManufacturingSystem object
                 ManufacturingSystem ms = new ManufacturingSystem();
-
-                ArrayList<ArrayList<Object>> rows = new ArrayList<>();
+                ArrayList<ArrayList<Object>> rows = new ArrayList<ArrayList<Object>>();
                 rows.add(ms.simulation);
 
-                int i = 0;
                 for(double time = ms.time; time < maxTime;){
-                    System.out.println(rows);
-                    rows.add(ms.simulation);
+                    ArrayList<Object> row = new ArrayList<Object>(ms.simulation);
+                    row.set(5, row.get(5).toString());
+                    rows.add(row);
                     ms.goToNextEvent();
                     time = ms.time;
-                    i++;
-                    if(i == 5){
-                        break;
-                    }
                 }
+                //put the first element at the end
+                ArrayList<Object> firstElement = rows.remove(0);
+                rows.add(firstElement);
 
-                results = rows.stream().map(u -> u.toArray(new Object[0])).toArray(Object[][]::new); //fix this
+                //converting arraylist to array
+                results = rows.stream().map(u -> u.toArray(new Object[0])).toArray(Object[][]::new);
+
 
                 // Updating the table with the new results
                 table.setModel(new DefaultTableModel(

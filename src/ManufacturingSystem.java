@@ -2,22 +2,22 @@
 import java.util.*;
 
 public class ManufacturingSystem {
-    static HashMap<Integer, Double[]> machineParts = new HashMap<>();
-    static ArrayList<Object> simulation = new ArrayList<>();
-    static int entityno = 0;
-    static double time  = 0;
-    static String eventType = "Init";
-    static int qt = 0;
-    static int bt = 0;
-    static Queue<Double> queue = new LinkedList<>();
-    static double inService  = 0;
+     HashMap<Integer, Double[]> machineParts = new HashMap<>();
+     ArrayList<Object> simulation = new ArrayList<>();
+     int entityno = 0;
+     double time  = 0;
+     String eventType = "Init";
+     int qt = 0;
+     int bt = 0;
+     Queue<Double> queue = new LinkedList<>();
+     double inService  = 0;
 //    Stack<Double> inService = new Stack<>(); // to allow empty values
-    static int p = 0;
-    static int n = 0;
-    static double wqsum = 0;
-    static double wqmax = 0;
-    static double tssum = 0;
-    static double tsmax = 0;
+     int p = 0;
+     int n = 0;
+     double wqsum = 0;
+     double wqmax = 0;
+     double tssum = 0;
+     double tsmax = 0;
 
     //instantiator
     public ManufacturingSystem(){
@@ -35,7 +35,7 @@ public class ManufacturingSystem {
         updateSimulationrow();
     }
 
-    public static void goToNextEvent(){
+    public void goToNextEvent(){
         // check if the next entity in the list is in the queue
         if(queue.contains(machineParts.get(entityno+1)[0]) & eventType == "Dep") {
             ++entityno;
@@ -85,7 +85,7 @@ public class ManufacturingSystem {
                 return;
             }
         } catch (Exception ex){
-            System.out.println(ex.toString());
+            System.out.println(ex);
         }
 
         // Check for arrivals
@@ -110,7 +110,7 @@ public class ManufacturingSystem {
         }
         updateSimulationrow();
     }
-    public static void updateSimulationrow(){
+    public void updateSimulationrow(){
         simulation.clear();
         simulation.add(entityno);
         simulation.add(time);
@@ -128,7 +128,7 @@ public class ManufacturingSystem {
     }
 
 
-    public static int getKey(double value){
+    public  int getKey(double value){
         for (Map.Entry<Integer, Double[]> set :machineParts.entrySet()) {
             if(set.getValue()[0] == value){
                 return set.getKey();
