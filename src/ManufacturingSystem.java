@@ -50,8 +50,13 @@ public class ManufacturingSystem {
             n++;
             p++;
             qt = queue.size();
+            wqmax = (Math.round((time - inService)*100.0)/100.0);
+            wqsum = (Math.round((wqmax + wqsum)*100.0)/100.0);
+            tsmax = Math.round(((inService + wqsum) - tssum)*100.0)/100.0;
+            tssum = inService + wqsum;
             updateSimulationrow();
             entityno = getKey(inService);
+
             return;
         }
         try{
@@ -72,6 +77,10 @@ public class ManufacturingSystem {
                     n++;
                     p++;
                     qt = queue.size();
+                    wqmax = (Math.round((time - inService)*100.0)/100.0);
+                    wqsum = (Math.round((wqmax + wqsum)*100.0)/100.0);
+                    tsmax = Math.round(((inService + wqsum) - tssum)*100.0)/100.0;
+                    tssum = inService + wqsum;
                     updateSimulationrow();
                     entityno = getKey(inService);
                 } else {
@@ -79,6 +88,8 @@ public class ManufacturingSystem {
                     p++;
                     bt = 0;
                     qt = queue.size();
+                    tsmax = Math.round(((time + wqsum) - tssum)*100.0)/100.0;
+                    tssum = time + wqsum;
                     updateSimulationrow();
 
                 }
