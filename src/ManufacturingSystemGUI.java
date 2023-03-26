@@ -80,12 +80,18 @@ public class ManufacturingSystemGUI extends JFrame {
                 rows.add(ms.simulation);
 
                 for(double time = ms.time; time < maxTime;){
-                    ArrayList<Object> row = new ArrayList<Object>(ms.simulation);
-                    row.set(5, row.get(5).toString());
-                    rows.add(row);
-                    ms.goToNextEvent();
-                    time = ms.time;
+                    try {
+                        ArrayList<Object> row = new ArrayList<Object>(ms.simulation);
+                        row.set(5, row.get(5).toString());
+                        rows.add(row);
+                        ms.goToNextEvent();
+                        time = ms.time;
+                    }catch (Exception ex){
+                        System.out.println(ex);
+                        break;
+                    }
                 }
+
                 //put the first element at the end
                 ArrayList<Object> firstElement = rows.remove(0);
                 rows.add(firstElement);
@@ -99,14 +105,21 @@ public class ManufacturingSystemGUI extends JFrame {
                         results,
                         headers
                 ));
+
+                double qtSum = computeAreaUnderCurve(results,'q');
+                double btSum = computeAreaUnderCurve(results,'b');
+
+                System.out.println(qtSum);
+                System.out.println(btSum);
                 // Updating the analytics panel with the new values
-//                nppValue.setText(String.valueOf(Math.round(qss.averageWaitingTime*1000.0)/1000.0) + " minutes");
-//                twtValue.setText();
-//                nptValue.setText();
-//                ltsValue.setText();
-//                ltValue.setText();
-//                auqvalue.setText();
-//                htqValue.setText();
+                nppValue.setText(String.valueOf(results[results.length-1][7]));
+                twtValue.setText(String.valueOf(results[results.length-1][9]));
+                nptValue.setText(String.valueOf(results[results.length-1][8]));
+                ltsValue.setText(String.valueOf(results[results.length-1][10]));
+                ltValue.setText(String.valueOf(results[results.length-1][12]));
+                auqvalue.setText(String.valueOf(qtSum));
+                htqValue.setText(getMax(results));
+                ausValue.setText(String.valueOf(btSum));
             }
 
 
@@ -117,5 +130,26 @@ public class ManufacturingSystemGUI extends JFrame {
         ManufacturingSystemGUI qs = new ManufacturingSystemGUI();
     }
 
+    public double computeAreaUnderCurve(Object[][] table, char cat){
+        double sum = 0;
+        for(int i = 2; i <table.length ;i++){
+            if(cat == 'q'){
+                sum += (((Number) table[i][1]).doubleValue() - ((Number) table[i-1][1]).doubleValue()) * ((Number) table[i][3]).doubleValue() ;
+            }
+
+            if(cat == 'b'){
+                sum += (((Number) table[i][1]).doubleValue() - ((Number) table[i-1][1]).doubleValue()) * ((Number) table[i][4]).doubleValue() ;
+            }
+        }
+        return sum;
+    }
+
+    public String getMax(Object[][] table){
+        int max = 0;
+        for(int i = 0; i <table.length;i++){
+            max = Math.max(max, (Integer) table[i][3]);
+        }
+        return String.valueOf(max);
+    }
 
 }
