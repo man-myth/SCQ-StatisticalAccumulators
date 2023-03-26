@@ -66,40 +66,55 @@ public class ManufacturingSystemGUI extends JFrame {
 
         // Adding an ActionListener to the simulateButton
         simulateButton.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Resetting the maxTime and maxCustomer variables
                 maxTime = 0;
+                boolean accept = false;
+
                 // Getting User input
                 maxTime = Integer.parseInt(input.getText());
 
-                // Creating a new ManufacturingSystem object
-                ManufacturingSystem ms = new ManufacturingSystem();
-                ArrayList<ArrayList<Object>> rows = new ArrayList<ArrayList<Object>>();
-                rows.add(ms.simulation);
-
-                for(double time = ms.time; time < maxTime;){
-                    ArrayList<Object> row = new ArrayList<Object>(ms.simulation);
-                    row.set(5, row.get(5).toString());
-                    rows.add(row);
-                    ms.goToNextEvent();
-                    time = ms.time;
+                if(maxTime>40) {
+                    JOptionPane.showMessageDialog(null, "Invalid input, it must be lower than 40");
+                } else {
+                    accept = true;
                 }
-                //put the first element at the end
-                ArrayList<Object> firstElement = rows.remove(0);
-                rows.add(firstElement);
 
-                //converting arraylist to array
-                results = rows.stream().map(u -> u.toArray(new Object[0])).toArray(Object[][]::new);
+                if(accept) {
+                    // Creating a new ManufacturingSystem object
+                    ManufacturingSystem ms = new ManufacturingSystem();
+                    ArrayList<ArrayList<Object>> rows = new ArrayList<ArrayList<Object>>();
+                    rows.add(ms.simulation);
+
+                    for (double time = ms.time; time < maxTime; ) {
+                        ArrayList<Object> row = new ArrayList<Object>(ms.simulation);
+                        row.set(5, row.get(5).toString());
+                        rows.add(row);
+                        ms.goToNextEvent();
+                        time = ms.time;
+//                    if(time>maxTime) {
+//                        rows.remove(rows.size()-1);
+//                    }
+                    }
+
+                    //put the first element at the end
+                    ArrayList<Object> firstElement = rows.remove(0);
+                    if (Double.parseDouble(firstElement.get(1).toString()) < maxTime) {
+                        rows.add(firstElement);
+                    }
+
+                    //converting arraylist to array
+                    results = rows.stream().map(u -> u.toArray(new Object[0])).toArray(Object[][]::new);
 
 
-                // Updating the table with the new results
-                table.setModel(new DefaultTableModel(
-                        results,
-                        headers
-                ));
-                // Updating the analytics panel with the new values
+                    // Updating the table with the new results
+                    table.setModel(new DefaultTableModel(
+                            results,
+                            headers
+                    ));
+                }
+//                Updating the analytics panel with the new values
 //                nppValue.setText(String.valueOf(Math.round(qss.averageWaitingTime*1000.0)/1000.0) + " minutes");
 //                twtValue.setText();
 //                nptValue.setText();
@@ -108,10 +123,9 @@ public class ManufacturingSystemGUI extends JFrame {
 //                auqvalue.setText();
 //                htqValue.setText();
             }
-
-
         });
     }
+
     // Start the queuing simulation
     public static void main(String[] args) {
         ManufacturingSystemGUI qs = new ManufacturingSystemGUI();
