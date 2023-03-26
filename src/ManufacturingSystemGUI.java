@@ -66,18 +66,26 @@ public class ManufacturingSystemGUI extends JFrame {
 
         // Adding an ActionListener to the simulateButton
         simulateButton.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Resetting the maxTime and maxCustomer variables
                 maxTime = 0;
+                boolean accept = false;
+
                 // Getting User input
                 maxTime = Integer.parseInt(input.getText());
 
-                // Creating a new ManufacturingSystem object
-                ManufacturingSystem ms = new ManufacturingSystem();
-                ArrayList<ArrayList<Object>> rows = new ArrayList<ArrayList<Object>>();
-                rows.add(ms.simulation);
+                if(maxTime>40) {
+                    JOptionPane.showMessageDialog(null, "Invalid input, it must be lower than 40");
+                } else {
+                    accept = true;
+                }
+
+                if(accept) {
+                    // Creating a new ManufacturingSystem object
+                    ManufacturingSystem ms = new ManufacturingSystem();
+                    ArrayList<ArrayList<Object>> rows = new ArrayList<ArrayList<Object>>();
+                    rows.add(ms.simulation);
 
                 for(double time = ms.time; time < maxTime;){
                     try {
@@ -94,10 +102,11 @@ public class ManufacturingSystemGUI extends JFrame {
 
                 //put the first element at the end
                 ArrayList<Object> firstElement = rows.remove(0);
-                rows.add(firstElement);
-
-                //converting arraylist to array
-                results = rows.stream().map(u -> u.toArray(new Object[0])).toArray(Object[][]::new);
+                    if (Double.parseDouble(firstElement.get(1).toString()) < maxTime) {
+                        rows.add(firstElement);
+                    }
+                    //converting arraylist to array
+                    results = rows.stream().map(u -> u.toArray(new Object[0])).toArray(Object[][]::new);
 
                 if(((Number) results[results.length-1][1]).doubleValue() > maxTime){
                     results[results.length-1][0] = " ";
