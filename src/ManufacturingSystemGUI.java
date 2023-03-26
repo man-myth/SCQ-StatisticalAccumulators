@@ -44,7 +44,7 @@ public class ManufacturingSystemGUI extends JFrame {
     Object[][] results = new Object[1][1];
 
     // Initializing variables to keep track of the maximum time and customer values
-    int maxTime = 0;
+    double maxTime = 0;
 
     // Constructor for the QueuingSystemGUI class
     public ManufacturingSystemGUI(){
@@ -99,6 +99,11 @@ public class ManufacturingSystemGUI extends JFrame {
                 //converting arraylist to array
                 results = rows.stream().map(u -> u.toArray(new Object[0])).toArray(Object[][]::new);
 
+                if(((Number) results[results.length-1][1]).doubleValue() > maxTime){
+                    results[results.length-1][0] = " ";
+                    results[results.length-1][1] = maxTime;
+                    results[results.length-1][2] = "End";
+                }
 
                 // Updating the table with the new results
                 table.setModel(new DefaultTableModel(
@@ -109,8 +114,6 @@ public class ManufacturingSystemGUI extends JFrame {
                 double qtSum = computeAreaUnderCurve(results,'q');
                 double btSum = computeAreaUnderCurve(results,'b');
 
-                System.out.println(qtSum);
-                System.out.println(btSum);
                 // Updating the analytics panel with the new values
                 nppValue.setText(String.valueOf(results[results.length-1][7]));
                 twtValue.setText(String.valueOf(results[results.length-1][9]));
@@ -131,15 +134,20 @@ public class ManufacturingSystemGUI extends JFrame {
     }
 
     public double computeAreaUnderCurve(Object[][] table, char cat){
+        System.out.println("For " + cat);
         double sum = 0;
-        for(int i = 2; i <table.length ;i++){
+        for(int i = 2; i <table.length-1;i++){
             if(cat == 'q'){
-                sum += (((Number) table[i][1]).doubleValue() - ((Number) table[i-1][1]).doubleValue()) * ((Number) table[i][3]).doubleValue() ;
+//                System.out.println("time = "+((Number) table[i][1]).doubleValue());
+//                System.out.println("time prev = "+((Number) table[i-1][1]).doubleValue());
+//                System.out.println("q = " +((Number) table[i][3]).doubleValue());
+                sum += (((Number) table[i][1]).doubleValue() - ((Number) table[i-1][1]).doubleValue()) * ((Number) table[i-1][3]).doubleValue() ;
             }
 
             if(cat == 'b'){
-                sum += (((Number) table[i][1]).doubleValue() - ((Number) table[i-1][1]).doubleValue()) * ((Number) table[i][4]).doubleValue() ;
+                sum += (((Number) table[i][1]).doubleValue() - ((Number) table[i-1][1]).doubleValue()) * ((Number) table[i-1][4]).doubleValue() ;
             }
+            System.out.println(sum);
         }
         return sum;
     }
