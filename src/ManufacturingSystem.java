@@ -52,7 +52,9 @@ public class ManufacturingSystem {
             qt = queue.size();
             wqmax = (Math.round((time - inService)*100.0)/100.0);
             wqsum = (Math.round((wqmax + wqsum)*100.0)/100.0);
-            tsmax = Math.round(((inService + wqsum) - tssum)*100.0)/100.0;
+            if(tsmax < Math.round(((inService + wqsum) - tssum)*100.0)/100.0)
+                tsmax = Math.round(((inService + wqsum) - tssum)*100.0)/100.0;
+//            System.out.println("tsmax: " +tsmax);
             tssum = inService + wqsum;
             updateSimulationrow();
             entityno = getKey(inService);
@@ -79,7 +81,9 @@ public class ManufacturingSystem {
                     qt = queue.size();
                     wqmax = Math.max((Math.round((time - inService)*100.0)/100.0),wqmax);
                     wqsum = ((((Math.round((time - inService)*100.0)/100.0) + wqsum)* 100.0) / 100.0);
-                    tsmax = Math.round(((inService + wqsum) - tssum)*100.0)/100.0;
+                    if(tsmax < Math.round(((inService + wqsum) - tssum)*100.0)/100.0)
+                        tsmax = Math.round(((inService + wqsum) - tssum)*100.0)/100.0;
+//                    System.out.println("tsmax: " +tsmax);
 //                    tsmax = Math.max(machineParts.get(entityno)[2] + machineParts.get(entityno)[0] -machineParts.get(entityno)[0],tsmax);
                     tssum = inService + wqsum;
 //                    tssum += machineParts.get(entityno)[2] + machineParts.get(entityno)[0] - machineParts.get(entityno)[0];
@@ -90,7 +94,9 @@ public class ManufacturingSystem {
                     p++;
                     bt = 0;
                     qt = queue.size();
-                    tsmax = Math.round(((time + wqsum) - tssum)*100.0)/100.0;
+                    if (tsmax < Math.round(((time + wqsum) - tssum)*100.0)/100.0)
+                        tsmax = Math.round(((time + wqsum) - tssum)*100.0)/100.0;
+//                    System.out.println("tsmax: " +tsmax);
                     tssum = time + wqsum;
 //                    tsmax = Math.max(machineParts.get(entityno)[2] + machineParts.get(entityno)[0] -machineParts.get(entityno)[0],tsmax);
 //                    tssum += machineParts.get(entityno)[2] + machineParts.get(entityno)[0] -machineParts.get(entityno)[0];
