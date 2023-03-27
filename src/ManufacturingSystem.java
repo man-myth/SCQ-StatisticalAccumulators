@@ -11,7 +11,6 @@ public class ManufacturingSystem {
      int bt = 0;
      Queue<Double> queue = new LinkedList<>();
      double inService  = 0;
-//    Stack<Double> inService = new Stack<>(); // to allow empty values
      int p = 0;
      int n = 0;
      double wqsum = 0;
@@ -61,9 +60,6 @@ public class ManufacturingSystem {
         }
         try{
             //Check if the person in queue is done
-//            System.out.println(machineParts.get(getKey(inService))[2] + machineParts.get(getKey(inService))[1]);
-//            System.out.println( machineParts.get(entityno+1)[0]);
-
             if(machineParts.get(getKey(inService))[2] + machineParts.get(getKey(inService))[1] <= machineParts.get(entityno+1)[0]){
                 entityno = getKey(inService);
                 eventType = "Dep";
@@ -155,9 +151,6 @@ public class ManufacturingSystem {
         public static void main(String[] args){
             ManufacturingSystem ms = new ManufacturingSystem();
             for (int i = 0; i < 15; i++) {
-//                if(i >9){
-//                    System.out.println(Arrays.toString(ms.machineParts.get(5)));
-//                }
                 System.out.println(ms.simulation);
                 ms.goToNextEvent();
 

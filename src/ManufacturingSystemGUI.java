@@ -40,6 +40,7 @@ public class ManufacturingSystemGUI extends JFrame {
     private JLabel atsValue;
     private JLabel aqtValue;
     private JLabel udpValue;
+    private JPanel leftPanel;
 
     // Defining headers for the table
     String [] headers = {"Entity No.", "Time", "Event type", "Q(t)",
@@ -56,8 +57,8 @@ public class ManufacturingSystemGUI extends JFrame {
         // Calling the constructor of the JFrame superclass and setting properties of the GUI
         super("midterm-act2");
         setContentPane(mainPanel);
-        setResizable(false);
-        setSize(900, 600);
+//        setResizable(false);
+        setSize(1100, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setVisible(true);
@@ -166,9 +167,6 @@ public class ManufacturingSystemGUI extends JFrame {
         double sum = 0;
         for(int i = 2; i <table.length;i++){
             if(cat == 'q'){
-//                System.out.println("time = "+((Number) table[i][1]).doubleValue());
-//                System.out.println("time prev = "+((Number) table[i-1][1]).doubleValue());
-//                System.out.println("q = " +((Number) table[i][3]).doubleValue());
                 sum += (((Number) table[i][1]).doubleValue() - ((Number) table[i-1][1]).doubleValue()) * ((Number) table[i-1][3]).doubleValue() ;
             }
 
