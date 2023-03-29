@@ -1,10 +1,13 @@
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.math.*;
-import java.util.Arrays;
+
 
 public class ManufacturingSystemGUI extends JFrame {
     // Declaring components of the GUI
@@ -42,6 +45,7 @@ public class ManufacturingSystemGUI extends JFrame {
     private JLabel aqtValue;
     private JLabel udpValue;
     private JPanel leftPanel;
+    private JScrollPane scrollPane;
 
     // Defining headers for the table
     String [] headers = {"Entity No.", "Time", "Event type", "Q(t)",
@@ -57,19 +61,26 @@ public class ManufacturingSystemGUI extends JFrame {
     public ManufacturingSystemGUI(){
         // Calling the constructor of the JFrame superclass and setting properties of the GUI
         super("midterm-act2");
+        Border raisedEtched = BorderFactory.createEtchedBorder(EtchedBorder.RAISED);
+        Border empty = BorderFactory.createEmptyBorder(10, 10, 10, 10);
+        Border compound = BorderFactory.createCompoundBorder(raisedEtched, empty);
+        inputPanel.setBorder(compound);
+        AnalysisPanel.setBorder(empty);
         setContentPane(mainPanel);
-//        setResizable(false);
-        setSize(1100, 600);
+        setResizable(false);
+        setSize(1300, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setVisible(true);
-
+        leftPanel.setPreferredSize(new Dimension(450, 550));
         // Initializing the table with the headers and results array
+        scrollPane.setPreferredSize(new Dimension(800, 550));
         table.setModel(new DefaultTableModel(
                 results,
                 headers
         ));
         table.setEnabled(false);
+
 
         // Adding an ActionListener to the simulateButton
         simulateButton.addActionListener(new ActionListener() {
@@ -138,20 +149,21 @@ public class ManufacturingSystemGUI extends JFrame {
 
                     double qtSum = computeAreaUnderCurve(results, 'q');
                     double btSum = computeAreaUnderCurve(results, 'b');
-
                     // Updating the analytics panel with the new values
                     nppValue.setText((results[results.length - 1][7])+ " ") ;
                     ltsValue.setText((results[results.length - 1][10]) + " mins");
                     twtValue.setText(String.valueOf(results[results.length - 1][9]));
-                    awtValue.setText((((Number)results[results.length - 1][9]).doubleValue() / ((Number)results[results.length - 1][8]).doubleValue())+ " mins/part");
+                    double awt =  ((Number)results[results.length - 1][9]).doubleValue() / ((Number)results[results.length - 1][8]).doubleValue();
+                    awtValue.setText( String.format("%.2f", awt) + " mins/part");
                     nptValue.setText(String.valueOf(results[results.length - 1][8]));
                     ltValue.setText(String.valueOf(results[results.length - 1][12]));
-                    atsValue.setText((((Number)results[results.length - 1][11]).doubleValue() / ((Number)results[results.length - 1][7]).doubleValue())+ " mins/part");
-                    auqvalue.setText(String.valueOf(qtSum));
+                    double ats = (((Number)results[results.length - 1][11]).doubleValue() / ((Number)results[results.length - 1][7]).doubleValue());
+                    atsValue.setText( String.format("%.2f", ats)+ " mins/part");
+                    auqvalue.setText(String.format("%.2f",qtSum));
                     htqValue.setText(getMax(results));
-                    aqtValue.setText(qtSum / maxTime + " part");
+                    aqtValue.setText(String.format("%.2f", (qtSum / maxTime)) + " part"); //
                     ausValue.setText(String.valueOf(btSum));
-                    udpValue.setText(btSum/maxTime * 100 + "%");
+                    udpValue.setText(String.format("%.2f", (btSum/maxTime * 100)) + "%"); //
                 }
 
             }
