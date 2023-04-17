@@ -17,6 +17,9 @@ public class ManufacturingSystem {
      double wqmax = 0;
      double tssum = 0;
      double tsmax = 0;
+     double sq = 0;
+     double sqmax = 0;
+     double sb = 0;
 
     //instantiator
     public ManufacturingSystem(){
@@ -40,7 +43,10 @@ public class ManufacturingSystem {
             ++entityno;
             entityno = getKey(inService);
             eventType = "Dep";
+            double tempTime = time;
             time = machineParts.get(getKey(inService))[2] + machineParts.get(getKey(inService))[1];
+            // compute for integrals
+            computeIntegral(tempTime);
             inService = queue.remove();
             double arr = machineParts.get(getKey(inService))[0];
             double ser = machineParts.get(getKey(inService))[1];
@@ -49,11 +55,13 @@ public class ManufacturingSystem {
             n++;
             p++;
             qt = queue.size();
+            if(qt > sqmax){
+                sqmax = qt;
+            }
             wqmax = (Math.round((time - inService)*100.0)/100.0);
             wqsum = (Math.round((wqmax + wqsum)*100.0)/100.0);
             if(tsmax < Math.round(((inService + wqsum) - tssum)*100.0)/100.0)
                 tsmax = Math.round(((inService + wqsum) - tssum)*100.0)/100.0;
-//            System.out.println("tsmax: " +tsmax);
             tssum = inService + wqsum;
             updateSimulationrow();
             entityno = getKey(inService);
@@ -65,7 +73,10 @@ public class ManufacturingSystem {
             if(machineParts.get(getKey(inService))[2] + machineParts.get(getKey(inService))[1] <= machineParts.get(entityno+1)[0]){
                 entityno = getKey(inService);
                 eventType = "Dep";
+                double tempTime = time;
                 time = machineParts.get(getKey(inService))[2] + machineParts.get(getKey(inService))[1];
+                // compute for integrals
+                computeIntegral(tempTime);
                 if(!queue.isEmpty()){
                     inService = queue.remove();
                     double arr = machineParts.get(getKey(inService))[0];
@@ -75,15 +86,15 @@ public class ManufacturingSystem {
                     n++;
                     p++;
                     qt = queue.size();
+                    if(qt > sqmax){
+                        sqmax = qt;
+                    }
                     wqmax = Math.max((Math.round((time - inService)*100.0)/100.0),wqmax);
                     wqsum = ((((Math.round((time - inService)*100.0)/100.0) + wqsum)* 100.0) / 100.0);
                     if(tsmax < Math.round(((inService + wqsum) - tssum)*100.0)/100.0) {
                         tsmax = Math.round(((inService + wqsum) - tssum) * 100.0) / 100.0;
                     }
                     tssum = inService + wqsum;
-
-//                    tsmax = Math.max(machineParts.get(entityno)[2] + machineParts.get(entityno)[0] -machineParts.get(entityno)[0],tsmax);
-//                    tssum += machineParts.get(entityno)[2] + machineParts.get(entityno)[0] - machineParts.get(entityno)[0];
 
                     updateSimulationrow();
                     entityno = getKey(inService);
@@ -92,14 +103,14 @@ public class ManufacturingSystem {
                     p++;
                     bt = 0;
                     qt = queue.size();
+                    if(qt > sqmax){
+                        sqmax = qt;
+                    }
                     if (tsmax < Math.round(((time + wqsum) - tssum)*100.0)/100.0) {
                         tsmax = Math.round(((time + wqsum) - tssum) * 100.0) / 100.0;
                     }
 
                     tssum = time + wqsum;
-
-//                    tsmax = Math.max(machineParts.get(entityno)[2] + machineParts.get(entityno)[0] -machineParts.get(entityno)[0],tsmax);
-//                    tssum += machineParts.get(entityno)[2] + machineParts.get(entityno)[0] -machineParts.get(entityno)[0];
 
                     updateSimulationrow();
 
@@ -112,23 +123,29 @@ public class ManufacturingSystem {
 
         // Check for arrivals
         if(time <= machineParts.get(entityno+1)[0]){
-
+            double tempTime = time;
             entityno += 1;
-
+            Double[] attributes = machineParts.get(entityno);
+            time = attributes[0];
+            // compute for integrals
+            computeIntegral(tempTime);
             if(bt == 0){
                 inService = machineParts.get(entityno)[0];
                 bt = 1;
                 n++;
                 double arr = machineParts.get(getKey(inService))[0];
                 double ser = machineParts.get(getKey(inService))[1];
-                machineParts.put(getKey(inService),new Double[]{arr,ser,time});
+                machineParts.put(getKey(inService),new Double[]{arr,ser,tempTime});
             } else {
                 queue.add(machineParts.get(entityno)[0]);
             }
+
             eventType = "Arr";
             qt = queue.size();
-            Double[] attributes = machineParts.get(entityno);
-            time = attributes[0];
+            if(qt > sqmax){
+                sqmax = qt;
+            }
+
         }
         updateSimulationrow();
     }
@@ -147,6 +164,9 @@ public class ManufacturingSystem {
         simulation.add(wqmax);
         simulation.add(tssum);
         simulation.add(tsmax);
+        simulation.add(sq);
+        simulation.add(sqmax);
+        simulation.add(sb);
     }
 
 
@@ -159,6 +179,13 @@ public class ManufacturingSystem {
         return 0;
     }
 
+    public void computeIntegral(double prevTime){
+        sq += (time-prevTime) * qt;
+        sb += (time-prevTime) * bt;
+
+
+
+    }
         public static void main(String[] args){
             ManufacturingSystem ms = new ManufacturingSystem();
             for (int i = 0; i < 15; i++) {
@@ -168,3 +195,5 @@ public class ManufacturingSystem {
             }
         }
 }
+
+

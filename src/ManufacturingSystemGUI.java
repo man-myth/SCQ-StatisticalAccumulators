@@ -49,7 +49,7 @@ public class ManufacturingSystemGUI extends JFrame {
 
     // Defining headers for the table
     String [] headers = {"Entity No.", "Time", "Event type", "Q(t)",
-            "B(t)", "In Queue", "In service", "P", "N", "ΣWQ", "WQ*", "ΣTQ", "TS*"};
+            "B(t)", "In Queue", "In service", "P", "N", "ΣWQ", "WQ*", "ΣTQ", "TS*", "∫Q", "∫Q*", "∫B"};
 
     // Initializing the results array
     Object[][] results = new Object[1][1];
@@ -112,7 +112,6 @@ public class ManufacturingSystemGUI extends JFrame {
                             ms.goToNextEvent();
                             time = ms.time;
                         } catch (Exception ex) {
-                            System.out.println(ex);
                             break;
                         }
                     }
@@ -123,6 +122,7 @@ public class ManufacturingSystemGUI extends JFrame {
 //                        rows.add(firstElement);
 //                    }
                     //converting arraylist to array
+
                     results = rows.stream().map(u -> u.toArray(new Object[0])).toArray(Object[][]::new);
 
                     if (((Number) results[results.length - 1][1]).doubleValue() > maxTime) {
@@ -139,16 +139,23 @@ public class ManufacturingSystemGUI extends JFrame {
                         results[results.length - 1][10] = results[results.length - 2][10];
                         results[results.length - 1][11] = results[results.length - 2][11];
                         results[results.length - 1][12] = results[results.length - 2][12];
+                        results[results.length - 1][13] = Double.parseDouble(results[results.length - 2][13].toString())+(maxTime - Double.parseDouble(results[results.length - 2][1].toString())) * Double.parseDouble(results[results.length - 2][3].toString());
+                        results[results.length - 1][14] = results[results.length - 2][14];
+                        results[results.length - 1][15] = Double.parseDouble(results[results.length - 2][15].toString())+(maxTime - Double.parseDouble(results[results.length - 2][1].toString())) * Double.parseDouble(results[results.length - 2][4].toString());
+
                     }
 
+                    double qtSum = computeAreaUnderCurve(results, 'q');
+                    double btSum = computeAreaUnderCurve(results, 'b');
+
+                    reformatTable();
                     // Updating the table with the new results
                     table.setModel(new DefaultTableModel(
                             results,
                             headers
                     ));
 
-                    double qtSum = computeAreaUnderCurve(results, 'q');
-                    double btSum = computeAreaUnderCurve(results, 'b');
+
                     // Updating the analytics panel with the new values
                     nppValue.setText((results[results.length - 1][7])+ " ") ;
                     ltsValue.setText((results[results.length - 1][10]) + " mins");
@@ -170,13 +177,9 @@ public class ManufacturingSystemGUI extends JFrame {
         }
         );
     }
-    // Start the queuing simulation
-    public static void main(String[] args) {
-        ManufacturingSystemGUI qs = new ManufacturingSystemGUI();
-    }
+
 
     public double computeAreaUnderCurve(Object[][] table, char cat){
-        System.out.println("For " + cat);
         double sum = 0;
         for(int i = 2; i <table.length;i++){
             if(cat == 'q'){
@@ -186,7 +189,6 @@ public class ManufacturingSystemGUI extends JFrame {
             if(cat == 'b'){
                 sum += (((Number) table[i][1]).doubleValue() - ((Number) table[i-1][1]).doubleValue()) * ((Number) table[i-1][4]).doubleValue() ;
             }
-            System.out.println(sum);
         }
         return sum;
     }
@@ -197,6 +199,18 @@ public class ManufacturingSystemGUI extends JFrame {
             max = Math.max(max, (Integer) table[i][3]);
         }
         return String.valueOf(max);
+    }
+
+    public void reformatTable(){
+        for(int i = 0; i < results.length; i++){
+            if(Double.parseDouble(results[i][6].toString())  == -1){
+                results[i][6] = " - ";
+            }
+        }
+    }
+    // Start the queuing simulation
+    public static void main(String[] args) {
+        ManufacturingSystemGUI qs = new ManufacturingSystemGUI();
     }
 
 }
