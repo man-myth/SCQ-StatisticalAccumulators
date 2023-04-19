@@ -88,16 +88,17 @@ public class ManufacturingSystemGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 // Resetting the maxTime and maxCustomer variables
                 maxTime = 0;
-                boolean accept = false;
+                boolean accept = true;
 
                 // Getting User input
-                maxTime = Integer.parseInt(input.getText());
+                maxTime = Double.parseDouble(input.getText());
 
-                if (maxTime > 40) {
-                    JOptionPane.showMessageDialog(null, "Invalid input, it must be lower than 40");
-                } else {
-                    accept = true;
-                }
+//                if (maxTime > 39) {
+////                    JOptionPane.showMessageDialog(null, "Invalid input, it must be lower than 40");
+//                    accept = true;
+//                } else {
+//                    accept = true;
+//                }
 
                 if (accept) {
                     // Creating a new ManufacturingSystem object
@@ -154,7 +155,6 @@ public class ManufacturingSystemGUI extends JFrame {
                             results,
                             headers
                     ));
-
 
                     // Updating the analytics panel with the new values
                     nppValue.setText((results[results.length - 1][7])+ " ") ;

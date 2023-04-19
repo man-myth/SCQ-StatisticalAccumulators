@@ -33,11 +33,14 @@ public class ManufacturingSystem {
         machineParts.put(8, new Double[]{34.91, 3.36, 0.0});
         machineParts.put(9, new Double[]{38.06, 2.37, 0.0});
         machineParts.put(10, new Double[]{39.82, 5.38, 0.0});
-        machineParts.put(11, new Double[]{40.82, null, null});
+        machineParts.put(11, new Double[]{40.82, generateServiceTime(), 0.0});
         updateSimulationrow();
     }
 
     public void goToNextEvent(){
+        if(getKey(inService) == machineParts.size()-1){
+            generateNewEntity(); // generate a new entity if there is no part next in the queue
+        }
         // check if the next entity in the list is in the queue
         if(queue.contains(machineParts.get(entityno+1)[0]) & eventType == "Dep") {
             ++entityno;
@@ -125,6 +128,9 @@ public class ManufacturingSystem {
         if(time <= machineParts.get(entityno+1)[0]){
             double tempTime = time;
             entityno += 1;
+//            if(entityno < machineParts.size()){
+//                generateNewEntity();
+//            }
             Double[] attributes = machineParts.get(entityno);
             time = attributes[0];
             // compute for integrals
@@ -135,7 +141,7 @@ public class ManufacturingSystem {
                 n++;
                 double arr = machineParts.get(getKey(inService))[0];
                 double ser = machineParts.get(getKey(inService))[1];
-                machineParts.put(getKey(inService),new Double[]{arr,ser,tempTime});
+                machineParts.put(getKey(inService),new Double[]{arr,ser,time});
             } else {
                 queue.add(machineParts.get(entityno)[0]);
             }
@@ -145,7 +151,15 @@ public class ManufacturingSystem {
             if(qt > sqmax){
                 sqmax = qt;
             }
-
+            for (Map.Entry<Integer, Double[]> entry : machineParts.entrySet()) {
+                Integer key = entry.getKey();
+                Double[] value = entry.getValue();
+                System.out.print(key + ": ");
+                for (int i = 0; i < value.length; i++) {
+                    System.out.print(value[i] + " ");
+                }
+                System.out.println();
+            }
         }
         updateSimulationrow();
     }
@@ -183,17 +197,89 @@ public class ManufacturingSystem {
         sq += (time-prevTime) * qt;
         sb += (time-prevTime) * bt;
 
+    }
 
+    public void generateNewEntity(){
+        //generate arrival time
+        double interarrivalTime = generateInterArrivalTime();
+        double arrivalTime = Math.round((interarrivalTime +  machineParts.get(machineParts.size())[0]) * 100.0) / 100.0; //add interarrival time to arrival time of previous part.
+        double serviceTime = Math.round(generateServiceTime() * 100.0) / 100.0;
+        System.out.println("Adding entity no " + (machineParts.size()+1) + "with interarrivaltime " + interarrivalTime + " prev time " + machineParts.get(machineParts.size())[0] + " service time " + serviceTime);
+        machineParts.put(machineParts.size()+1, new Double[]{arrivalTime, serviceTime, 0.0});
 
     }
-        public static void main(String[] args){
-            ManufacturingSystem ms = new ManufacturingSystem();
-            for (int i = 0; i < 15; i++) {
-                System.out.println(ms.simulation);
-                ms.goToNextEvent();
 
+    public double generateServiceTime(){
+        Random r  = new Random();
+        int randInt = r.nextInt(100);
+        double[][] serviceTimeProbabilities = {         //cumulative probability, minvalue, maxvalue
+                {9,1,1.99},
+                {39,2,2.99},
+                {59,3,3.99},
+                {89,4,4.99},
+                {99,5,5.99}
+        };
+        double serviceTime = 0;
+        for(int i = 0; i<serviceTimeProbabilities.length;i++){
+            if(randInt<serviceTimeProbabilities[i][0]){
+                double rangeMin = serviceTimeProbabilities[i][1];
+                double rangeMax = serviceTimeProbabilities[i][2];
+                serviceTime = (rangeMin + (rangeMax - rangeMin) * r.nextDouble()) ;
+                break;
             }
         }
+
+        return serviceTime;
+    }
+    public double generateInterArrivalTime(){
+        Random r  = new Random();
+        int randInt = r.nextInt(100);
+        double[][] interArrivalProbabilities ={
+                {29,0.1,0.99},
+                {69,1,1.99},
+                {79,3,3.99},
+                {89,14,14.99},
+                {99,15,15.99}
+        };
+        double arrivalTime = 0;
+
+        for(int i = 0; i<interArrivalProbabilities.length; i++){
+            if(randInt<interArrivalProbabilities[i][0]){
+                double rangeMin = interArrivalProbabilities[i][1];
+                double rangeMax = interArrivalProbabilities[i][2];
+                arrivalTime = (rangeMin + (rangeMax - rangeMin) * r.nextDouble());
+                break;
+            }
+        }
+        System.out.println("interarrival: " + arrivalTime);
+        return arrivalTime;
+    }
+
+
+//    public static void main(String[] args){
+//        ManufacturingSystem ms = new ManufacturingSystem();
+////        for (int i = 0; i < 40; i++) {
+////            System.out.println(ms.simulation);
+////            ms.goToNextEvent();
+////        }
+//
+//        ms.generateNewEntity();
+//        ms.generateNewEntity();
+//        ms.generateNewEntity();
+//        ms.generateNewEntity();
+//        for (Map.Entry<Integer, Double[]> entry : ms.machineParts.entrySet()) {
+//            Integer key = entry.getKey();
+//            Double[] value = entry.getValue();
+//            System.out.print(key + ": ");
+//            for (int i = 0; i < value.length; i++) {
+//                System.out.print(value[i] + " ");
+//            }
+//            System.out.println();
+//        }
+//    }
 }
+
+
+
 
 
